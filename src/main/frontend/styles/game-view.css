@@ -1,0 +1,36 @@
+.game-view {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.chess-grid {
+    display: grid;
+    gap: 5px;
+}
+
+.chess-grid button {
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-color: #f0f0f0;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.chess-grid button:hover {
+    background-color: #e0e0e0;
+}
+
+.invalid-move {
+    animation: flash-red 0.3s;
+    background-color: #ff4d4d !important;
+    color: white;
+}
+
+@keyframes flash-red {
+    0%   { background-color: #ff4d4d; }
+    100% { background-color: transparent; }
+}
