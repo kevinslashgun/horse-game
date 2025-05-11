@@ -7,5 +7,9 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
+
+# Espone la porta che Render si aspetta
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# Avvia l'app con la porta fornita da Render
+CMD ["sh", "-c", "java -jar app.jar --server.port=${PORT}"]
