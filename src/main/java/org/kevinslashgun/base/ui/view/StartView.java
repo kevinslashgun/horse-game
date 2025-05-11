@@ -42,7 +42,7 @@ public class StartView extends VerticalLayout {
         // ComboBox per selezione dimensione
         ComboBox<Integer> sizeSelector = new ComboBox<>("📏 Dimensione della scacchiera");
         sizeSelector.addClassName("combo-box");
-        sizeSelector.setItems(4, 5, 6);
+        sizeSelector.setItems(4, 5, 6, 7, 8);
         sizeSelector.setValue(5); // valore di default
 
         Button startButton = new Button("🎮 Inizia a giocare", e -> {
