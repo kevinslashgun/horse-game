@@ -3,7 +3,6 @@ import { injectGlobalCss } from 'Frontend/generated/jar-resources/theme-util.js'
 import { css, unsafeCSS, registerStyles } from '@vaadin/vaadin-themable-mixin';
 import $cssFromFile_0 from 'Frontend/styles/game-view.css?inline';
 import $cssFromFile_1 from 'Frontend/styles/start-view.css?inline';
-import '@vaadin/field-highlighter/theme/lumo/vaadin-field-highlighter.js';
 import '@vaadin/common-frontend/ConnectionIndicator.js';
 import '@vaadin/polymer-legacy-adapter/style-modules.js';
 import '@vaadin/accordion/theme/lumo/vaadin-accordion.js';
@@ -46,6 +45,7 @@ import '@vaadin/time-picker/theme/lumo/vaadin-time-picker.js';
 import 'Frontend/generated/jar-resources/vaadin-time-picker/timepickerConnector.js';
 import '@vaadin/dialog/theme/lumo/vaadin-dialog.js';
 import 'Frontend/generated/jar-resources/dndConnector.js';
+import '@vaadin/field-highlighter/theme/lumo/vaadin-field-highlighter.js';
 import '@vaadin/form-layout/theme/lumo/vaadin-form-layout.js';
 import '@vaadin/form-layout/theme/lumo/vaadin-form-item.js';
 import '@vaadin/grid/theme/lumo/vaadin-grid-column-group.js';

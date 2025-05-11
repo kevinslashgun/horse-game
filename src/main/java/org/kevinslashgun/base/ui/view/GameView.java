@@ -13,6 +13,7 @@ import java.util.Optional;
 @CssImport("./styles/game-view.css")
 public class GameView extends VerticalLayout implements BeforeEnterObserver {
 
+    private int moveCount = 0;
     private int size = 5;
     private boolean[][] visited;
     private int knightX = -1;
@@ -65,6 +66,7 @@ public class GameView extends VerticalLayout implements BeforeEnterObserver {
         if (knightX == -1 && knightY == -1) {
             knightX = x;
             knightY = y;
+            moveCount = 0;
             markVisited(x, y);
             updateBoard();
             return;
@@ -109,6 +111,7 @@ public class GameView extends VerticalLayout implements BeforeEnterObserver {
             dialog.close();
             knightX = -1;
             knightY = -1;
+            moveCount = 0;
             visited = new boolean[size][size];
             updateBoard();
         });
@@ -142,6 +145,7 @@ public class GameView extends VerticalLayout implements BeforeEnterObserver {
 
     private void markVisited(int x, int y) {
         visited[y][x] = true;
+        cells[y][x].getElement().setProperty("moveNumber", moveCount++);
     }
 
     private void updateBoard() {
@@ -151,11 +155,29 @@ public class GameView extends VerticalLayout implements BeforeEnterObserver {
                 if (x == knightX && y == knightY) {
                     cell.setText("🐴");
                 } else if (visited[y][x]) {
-                    cell.setText("✅");
+                    int moveNum = cell.getElement().getProperty("moveNumber", 0);
+                    cell.setText(getNumberEmoji(moveNum));
                 } else {
                     cell.setText("");
                 }
             }
         }
+    }
+
+    // Metodo per convertire numeri in emoji
+    private String getNumberEmoji(int number) {
+        String[] digitEmojis = { "0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣" };
+        if (number < 10) {
+            return digitEmojis[number];
+        }
+
+        // Per numeri > 9, combina più emoji
+        StringBuilder emojiNumber = new StringBuilder();
+        while (number > 0) {
+            int digit = number % 10;
+            emojiNumber.insert(0, digitEmojis[digit]);
+            number /= 10;
+        }
+        return emojiNumber.toString();
     }
 }
