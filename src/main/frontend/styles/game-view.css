@@ -1,36 +1,111 @@
+:root {
+    /* Riutilizzo alcune variabili dalla start view per coerenza */
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #f4f4f4;
+    --accent-color: #FFD700;
+    --accent-color-hover: #FFC700;
+    --danger-color: #cf6679;
+    --success-color: #03dac6;
+    --border-color: #373737;
+    --cell-bg: #2a2a2a;
+    --cell-hover: #3a3a3a;
+    --grid-line-color: #11191f; /* Colore delle linee della griglia */
+}
+
 .game-view {
+    background-color: var(--bg-color);
+    color: var(--text-color);
     padding: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    justify-content: center;
+    gap: 2rem;
+    min-height: 100vh;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .chess-grid {
     display: grid;
-    gap: 5px;
+    gap: 8px; /* Spazio tra le celle */
+    background-color: var(--grid-line-color); /* Colore delle linee */
+    padding: 8px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .chess-grid button {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: bold;
-    background-color: #f0f0f0;
-    border: 2px solid #ccc;
+    background-color: var(--cell-bg);
+    color: var(--text-color);
+    border: none;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: 
+        background-color 0.2s ease,
+        transform 0.1s ease,
+        box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Effetto scacchiera */
+.chess-grid button:nth-child(even):nth-of-type(even),
+.chess-grid button:nth-child(odd):nth-of-type(odd) {
+    background-color: #2e2e2e; /* Leggermente più chiaro per creare contrasto */
 }
 
 .chess-grid button:hover {
-    background-color: #e0e0e0;
+    background-color: var(--cell-hover);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chess-grid button:focus {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 2px;
 }
 
 .invalid-move {
     animation: flash-red 0.3s;
-    background-color: #ff4d4d !important;
-    color: white;
+    background-color: var(--danger-color) !important;
+    color: white !important;
 }
 
 @keyframes flash-red {
-    0%   { background-color: #ff4d4d; }
-    100% { background-color: transparent; }
+    0%, 100% { 
+        background-color: var(--danger-color);
+        transform: translateX(0);
+    }
+    25% { 
+        background-color: #ff6b6b;
+        transform: translateX(-5px);
+    }
+    75% { 
+        background-color: #ff6b6b;
+        transform: translateX(5px);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .game-view {
+        padding: 1rem;
+    }
+
+    .chess-grid {
+        gap: 4px;
+    }
+
+    .chess-grid button {
+        font-size: 1.4rem;
+    }
+}
+
+/* Accessibilità migliorata per gli stati dei pulsanti */
+.chess-grid button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
 }

@@ -1,40 +1,165 @@
+:root {
+    /* Enhanced color palette with better contrast and harmony */
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #f4f4f4;
+    --accent-color: #FFD700;
+    --accent-color-hover: #FFC700;
+    --danger-color: #cf6679;
+    --danger-color-hover: #a4516a;
+    --warning-color: #ffb74d;
+    --success-color: #03dac6;
+    --success-color-hover: #02b3a6;
+    --button-hover: #333333;
+    --border-color: #373737;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
 .start-view {
+    background-color: var(--bg-color);
+    color: var(--text-color);
     padding: 2rem;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2rem;
     text-align: center;
-}
-
-.rules-box {
-    background-color: #fff4e6;
-    border: 2px dashed #ffa726;
-    padding: 1rem;
-    border-radius: 10px;
-    max-width: 500px;
+    min-height: 100vh;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
 }
 
 .title {
-    font-size: 3rem;
-    color: #3f51b5;
+    font-size: 3.5rem;
+    color: var(--accent-color);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 6px var(--shadow-color);
 }
 
-.primary-button, .secondary-button {
-    width: 250px;
+.rules-box {
+    background-color: var(--card-bg);
+    border: 2px dashed var(--warning-color);
+    padding: 2rem;
+    border-radius: 16px;
+    max-width: 500px;
+    color: var(--text-color);
+    box-shadow: 0 10px 20px var(--shadow-color);
+    transition: transform 0.3s ease;
+}
+
+.rules-box:hover {
+    transform: scale(1.02);
+}
+
+.rules-box h3 {
+    color: var(--accent-color);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.rules-box p {
+    margin: 0.5rem 0;
+    opacity: 0.9;
+}
+
+.game-over {
+    color: var(--danger-color);
+    font-weight: bold;
     font-size: 1.2rem;
-}
-
-.primary-button {
-    background-color: #4caf50;
-    color: white;
-}
-
-.secondary-button {
-    background-color: #f44336;
-    color: white;
+    margin-top: 1rem;
+    text-transform: uppercase;
 }
 
 .combo-box {
     width: 250px;
+    margin: 1rem 0;
+}
+
+.combo-box::part(label) {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.combo-box::part(input-field) {
+    color: var(--text-color);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.combo-box::part(input-field):focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.2);
+}
+
+.primary-button, 
+.secondary-button {
+    width: 250px;
+    font-size: 1.2rem;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: 
+        background-color 0.3s ease, 
+        transform 0.2s ease,
+        color 0.3s ease;
+}
+
+.primary-button {
+    background-color: var(--success-color);
+    color: black;
+}
+
+.primary-button:hover {
+    background-color: var(--success-color-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.secondary-button {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.secondary-button:hover {
+    background-color: var(--danger-color-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .title {
+        font-size: 2.5rem;
+    }
+
+    .rules-box {
+        width: 90%;
+        max-width: 350px;
+        padding: 1.5rem;
+    }
+
+    .primary-button, 
+    .secondary-button,
+    .combo-box {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* Accessibility and focus states */
+.primary-button:focus,
+.secondary-button:focus {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 3px;
 }

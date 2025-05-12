@@ -7,90 +7,117 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import org.kevinslashgun.base.domain.service.GameService;
+
 import java.util.Optional;
 
 @Route("game")
 @CssImport("./styles/game-view.css")
 public class GameView extends VerticalLayout implements BeforeEnterObserver {
 
-    private int moveCount = 0;
-    private int size = 5;
-    private boolean[][] visited;
-    private int knightX = -1;
-    private int knightY = -1;
+    private final transient GameService gameService;
     private Button[][] cells;
+
+    public GameView(GameService gameService) {
+        this.gameService = gameService;
+        this.cells = new Button[0][0]; // Initialize with an empty array
+        addClassName("game-view");
+    }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Optional<String> sizeParam = event.getLocation().getQueryParameters().getParameters()
-                .getOrDefault("size", java.util.List.of()).stream().findFirst();
-        sizeParam.ifPresent(param -> {
-            try {
-                size = Integer.parseInt(param);
-            } catch (NumberFormatException ignored) {
-                // Ignoring invalid size parameter, default size will be used
-            }
-        });
-
-        visited = new boolean[size][size];
-        cells = new Button[size][size];
-        initView();
+        int size = getSizeFromQuery(event);
+        gameService.initializeGame(size);
+        initGameBoard(size);
     }
 
-    private void initView() {
+    private int getSizeFromQuery(BeforeEnterEvent event) {
+        Optional<String> sizeParam = event.getLocation()
+                .getQueryParameters()
+                .getParameters()
+                .getOrDefault("size", java.util.List.of())
+                .stream()
+                .findFirst();
+
+        return sizeParam.map(Integer::parseInt).orElse(5);
+    }
+
+    private void initGameBoard(int size) {
         removeAll();
-        addClassName("game-view");
-        Div grid = new Div();
-        grid.addClassName("chess-grid");
-        grid.getStyle().set("grid-template-columns", "repeat(" + size + ", 60px)");
-        grid.getStyle().set("grid-template-rows", "repeat(" + size + ", 60px)");
 
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                Button cell = new Button();
-                cell.setWidth("60px");
-                cell.setHeight("60px");
-                final int cx = x;
-                final int cy = y;
-
-                cell.addClickListener(e -> handleClick(cx, cy));
-                cells[y][x] = cell;
-                grid.add(cell);
-            }
-        }
+        Div grid = createGrid(size);
+        createCells(size, grid);
 
         add(grid);
     }
 
-    private void handleClick(int x, int y) {
-        if (knightX == -1 && knightY == -1) {
-            knightX = x;
-            knightY = y;
-            moveCount = 0;
-            markVisited(x, y);
-            updateBoard();
-            return;
-        }
+    private Div createGrid(int size) {
+        Div grid = new Div();
+        grid.addClassName("chess-grid");
+        grid.getStyle()
+                .set("grid-template-columns", "repeat(" + size + ", 60px)")
+                .set("grid-template-rows", "repeat(" + size + ", 60px)");
+        return grid;
+    }
 
-        if (!isValidMove(x, y)) {
-            Button invalidCell = cells[y][x];
-            invalidCell.getElement().executeJs(
-                    "this.classList.add('invalid-move'); setTimeout(() => this.classList.remove('invalid-move'), 300);");
-            return;
-        }
+    private void createCells(int size, Div grid) {
+        cells = new Button[size][size];
 
-        if (visited[y][x]) {
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                Button cell = createCell(x, y);
+                cells[y][x] = cell;
+                grid.add(cell);
+            }
+        }
+    }
+
+    private Button createCell(int x, int y) {
+        Button cell = new Button();
+        cell.setWidth("60px");
+        cell.setHeight("60px");
+        cell.addClickListener(e -> handleCellClick(x, y));
+        return cell;
+    }
+
+    private void handleCellClick(int x, int y) {
+        if (gameService.isVisited(x, y)) {
+            showInvalidMove(x, y);
             showEndGameDialog("Hai già visitato quella casella. GAME OVER!", false);
             return;
         }
 
-        knightX = x;
-        knightY = y;
-        markVisited(x, y);
-        updateBoard();
+        if (gameService.makeMove(x, y)) {
+            updateBoard();
+            if (gameService.isGameWon()) {
+                showEndGameDialog("Hai visitato tutte le caselle! Hai vinto!", true);
+            }
+        } else {
+            showInvalidMove(x, y);
+        }
+    }
 
-        if (isGameWon()) {
-            showEndGameDialog("Hai visitato tutte le caselle! Hai vinto!", true);
+    private void showInvalidMove(int x, int y) {
+        cells[y][x].getElement().executeJs(
+                "this.classList.add('invalid-move'); setTimeout(() => this.classList.remove('invalid-move'), 300);");
+    }
+
+    private void updateBoard() {
+        int size = gameService.getBoardSize();
+        int[] currentPos = gameService.getCurrentPosition();
+
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                Button cell = cells[y][x];
+
+                if (x == currentPos[0] && y == currentPos[1]) {
+                    cell.setText("🐴");
+                } else if (gameService.isVisited(x, y)) {
+                    cell.setText(getNumberEmoji(gameService.getMoveNumber(x, y)));
+                } else {
+                    cell.setText("");
+                }
+            }
         }
     }
 
@@ -109,10 +136,7 @@ public class GameView extends VerticalLayout implements BeforeEnterObserver {
 
         Button restartButton = new Button("🔁 Gioca di nuovo", e -> {
             dialog.close();
-            knightX = -1;
-            knightY = -1;
-            moveCount = 0;
-            visited = new boolean[size][size];
+            gameService.initializeGame(gameService.getBoardSize());
             updateBoard();
         });
 
@@ -126,52 +150,11 @@ public class GameView extends VerticalLayout implements BeforeEnterObserver {
         dialog.open();
     }
 
-    private boolean isGameWon() {
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                if (!visited[y][x]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean isValidMove(int x, int y) {
-        int dx = Math.abs(x - knightX);
-        int dy = Math.abs(y - knightY);
-        return dx * dy == 2;
-    }
-
-    private void markVisited(int x, int y) {
-        visited[y][x] = true;
-        cells[y][x].getElement().setProperty("moveNumber", moveCount++);
-    }
-
-    private void updateBoard() {
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                Button cell = cells[y][x];
-                if (x == knightX && y == knightY) {
-                    cell.setText("🐴");
-                } else if (visited[y][x]) {
-                    int moveNum = cell.getElement().getProperty("moveNumber", 0);
-                    cell.setText(getNumberEmoji(moveNum));
-                } else {
-                    cell.setText("");
-                }
-            }
-        }
-    }
-
-    // Metodo per convertire numeri in emoji
     private String getNumberEmoji(int number) {
         String[] digitEmojis = { "0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣" };
-        if (number < 10) {
+        if (number < 10)
             return digitEmojis[number];
-        }
 
-        // Per numeri > 9, combina più emoji
         StringBuilder emojiNumber = new StringBuilder();
         while (number > 0) {
             int digit = number % 10;

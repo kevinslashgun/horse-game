@@ -4,10 +4,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
@@ -15,16 +12,30 @@ import com.vaadin.flow.router.Route;
 @CssImport("./styles/start-view.css")
 public class StartView extends VerticalLayout {
 
+    private final ComboBox<Integer> sizeSelector = new ComboBox<>("📏 Dimensione della scacchiera");
+
     public StartView() {
+        configureLayout();
+        addTitle();
+        addRules();
+        configureSizeSelector();
+        addActionButtons();
+    }
+
+    private void configureLayout() {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
         addClassName("start-view");
+        setSizeFull();
+    }
 
-        // Titolo
+    private void addTitle() {
         H1 title = new H1("🐴 Horse Game");
         title.addClassName("title");
+        add(title);
+    }
 
-        // Box regole
+    private void addRules() {
         Div rulesBox = new Div();
         rulesBox.addClassName("rules-box");
 
@@ -39,22 +50,31 @@ public class StartView extends VerticalLayout {
                 new Paragraph("- Se ripassi su una casella già visitata: "),
                 gameOverParagraph);
 
-        // ComboBox per selezione dimensione
-        ComboBox<Integer> sizeSelector = new ComboBox<>("📏 Dimensione della scacchiera");
+        add(rulesBox);
+    }
+
+    private void configureSizeSelector() {
         sizeSelector.addClassName("combo-box");
         sizeSelector.setItems(4, 5, 6, 7, 8);
-        sizeSelector.setValue(5); // valore di default
+        sizeSelector.setValue(5);
+        add(sizeSelector);
+    }
 
-        Button startButton = new Button("🎮 Inizia a giocare", e -> {
-            Integer selectedSize = sizeSelector.getValue();
-            UI.getCurrent().navigate("game?size=" + selectedSize);
-        });
-
-        Button exitButton = new Button("❌ Esci", e -> UI.getCurrent().getPage().executeJs("window.close()"));
+    private void addActionButtons() {
+        Button startButton = new Button("🎮 Inizia a giocare", e -> startGame());
+        Button exitButton = new Button("❌ Esci", e -> exitGame());
 
         startButton.addClassName("primary-button");
         exitButton.addClassName("secondary-button");
 
-        add(title, rulesBox, sizeSelector, startButton, exitButton);
+        add(startButton, exitButton);
+    }
+
+    private void startGame() {
+        UI.getCurrent().navigate("game?size=" + sizeSelector.getValue());
+    }
+
+    private void exitGame() {
+        UI.getCurrent().getPage().executeJs("window.close()");
     }
 }
