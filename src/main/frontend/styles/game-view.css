@@ -1,5 +1,4 @@
 :root {
-    /* Riutilizzo alcune variabili dalla start view per coerenza */
     --bg-color: #121212;
     --card-bg: #1e1e1e;
     --text-color: #f4f4f4;
@@ -10,7 +9,7 @@
     --border-color: #373737;
     --cell-bg: #2a2a2a;
     --cell-hover: #3a3a3a;
-    --grid-line-color: #11191f; /* Colore delle linee della griglia */
+    --grid-line-color: #11191f;
 }
 
 .game-view {
@@ -28,8 +27,8 @@
 
 .chess-grid {
     display: grid;
-    gap: 8px; /* Spazio tra le celle */
-    background-color: var(--grid-line-color); /* Colore delle linee */
+    gap: 8px;
+    background-color: var(--grid-line-color);
     padding: 8px;
     border-radius: 12px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
@@ -51,10 +50,9 @@
     justify-content: center;
 }
 
-/* Effetto scacchiera */
 .chess-grid button:nth-child(even):nth-of-type(even),
 .chess-grid button:nth-child(odd):nth-of-type(odd) {
-    background-color: #2e2e2e; /* Leggermente più chiaro per creare contrasto */
+    background-color: #2e2e2e;
 }
 
 .chess-grid button:hover {
@@ -89,7 +87,33 @@
     }
 }
 
-/* Responsive Design */
+.end-game-dialog {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.end-game-message {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+vaadin-dialog-overlay::part(overlay) {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+vaadin-dialog-overlay::part(backdrop) {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
 @media (max-width: 600px) {
     .game-view {
         padding: 1rem;
@@ -102,9 +126,16 @@
     .chess-grid button {
         font-size: 1.4rem;
     }
+
+    .end-game-dialog {
+        padding: 1rem;
+    }
+
+    .end-game-message {
+        font-size: 1.2rem;
+    }
 }
 
-/* Accessibilità migliorata per gli stati dei pulsanti */
 .chess-grid button:active {
     transform: scale(0.95);
     transition: transform 0.1s ease;

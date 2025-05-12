@@ -5,6 +5,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import org.kevinslashgun.base.domain.service.GameService;
@@ -130,9 +131,12 @@ public class GameView extends VerticalLayout implements BeforeEnterObserver {
         layout.setPadding(true);
         layout.setSpacing(true);
         layout.setAlignItems(Alignment.CENTER);
+        layout.addClassName("end-game-dialog");
 
         String emoji = isVictory ? "🏆" : "❌";
-        layout.add(new com.vaadin.flow.component.html.Span(emoji + " " + message));
+        Span messageSpan = new Span(emoji + " " + message);
+        messageSpan.addClassName("end-game-message");
+        layout.add(messageSpan);
 
         Button restartButton = new Button("🔁 Gioca di nuovo", e -> {
             dialog.close();
@@ -144,6 +148,9 @@ public class GameView extends VerticalLayout implements BeforeEnterObserver {
             dialog.close();
             UI.getCurrent().navigate("");
         });
+
+        restartButton.addClassName("primary-button");
+        homeButton.addClassName("secondary-button");
 
         layout.add(restartButton, homeButton);
         dialog.add(layout);

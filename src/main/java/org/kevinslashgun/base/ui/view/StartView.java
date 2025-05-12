@@ -62,19 +62,13 @@ public class StartView extends VerticalLayout {
 
     private void addActionButtons() {
         Button startButton = new Button("🎮 Inizia a giocare", e -> startGame());
-        Button exitButton = new Button("❌ Esci", e -> exitGame());
 
         startButton.addClassName("primary-button");
-        exitButton.addClassName("secondary-button");
 
-        add(startButton, exitButton);
+        add(startButton);
     }
 
     private void startGame() {
         UI.getCurrent().navigate("game?size=" + sizeSelector.getValue());
-    }
-
-    private void exitGame() {
-        UI.getCurrent().getPage().executeJs("window.close()");
     }
 }
