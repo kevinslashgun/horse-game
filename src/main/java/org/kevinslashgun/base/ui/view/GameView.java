@@ -40,7 +40,42 @@ public class GameView extends VerticalLayout implements BeforeEnterObserver {
                 .stream()
                 .findFirst();
 
-        return sizeParam.map(Integer::parseInt).orElse(5);
+        int size = sizeParam.map(Integer::parseInt).orElse(5);
+
+        // Validazione del range
+        if (size < 4 || size > 8) {
+            // Reindirizza alla home con un messaggio o mostra un dialog
+            showInvalidSizeDialog();
+            return 5;
+        }
+
+        return size;
+    }
+
+    private void showInvalidSizeDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setCloseOnEsc(false);
+        dialog.setCloseOnOutsideClick(false);
+
+        VerticalLayout layout = new VerticalLayout();
+        layout.setPadding(true);
+        layout.setSpacing(true);
+        layout.setAlignItems(Alignment.CENTER);
+        layout.addClassName("end-game-dialog");
+
+        Span messageSpan = new Span("La dimensione scelta non è valida. Deve essere tra 4 e 8.");
+        messageSpan.addClassName("end-game-message");
+
+        layout.add(messageSpan);
+
+        Button okButton = new Button("OK", e -> {
+            UI.getCurrent().navigate("");
+            dialog.close();
+        });
+        okButton.setClassName("secondary-button");
+        layout.add(okButton);
+        dialog.add(layout);
+        dialog.open();
     }
 
     private void initGameBoard(int size) {

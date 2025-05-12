@@ -8,14 +8,17 @@ public class GameService {
     private int currentX = -1;
     private int currentY = -1;
     private int moveCount = 0;
-    
+
     public void initializeGame(int size) {
+        if (size < 4 || size > 8) {
+            throw new IllegalArgumentException("Size must be between 4 and 8");
+        }
         this.board = new int[size][size];
         this.currentX = -1;
         this.currentY = -1;
         this.moveCount = 0;
     }
-    
+
     public boolean makeMove(int x, int y) {
         if (currentX == -1 && currentY == -1) {
             currentX = x;
@@ -23,42 +26,43 @@ public class GameService {
             board[y][x] = ++moveCount;
             return true;
         }
-        
+
         if (isValidMove(x, y)) {
             currentX = x;
             currentY = y;
             board[y][x] = ++moveCount;
             return true;
         }
-        
+
         return false;
     }
-    
+
     public boolean isGameWon() {
         for (int[] row : board) {
             for (int cell : row) {
-                if (cell == 0) return false;
+                if (cell == 0)
+                    return false;
             }
         }
         return true;
     }
-    
+
     public boolean isVisited(int x, int y) {
         return board[y][x] > 0;
     }
-    
+
     public int getMoveNumber(int x, int y) {
         return board[y][x];
     }
-    
+
     public int[] getCurrentPosition() {
-        return new int[]{currentX, currentY};
+        return new int[] { currentX, currentY };
     }
-    
+
     public int getBoardSize() {
         return board.length;
     }
-    
+
     private boolean isValidMove(int x, int y) {
         int dx = Math.abs(x - currentX);
         int dy = Math.abs(y - currentY);
